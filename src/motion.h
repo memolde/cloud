@@ -1,3 +1,4 @@
+#pragma once
 #include <Arduino.h>
 // I2C device class (I2Cdev) demonstration Arduino sketch for MPU6050 class using DMP (MotionApps v2.0)
 // 6/21/2012 by Jeff Rowberg <jeff@rowberg.net>
@@ -135,7 +136,7 @@ uint16_t fifoCount;     // count of all bytes currently in FIFO
 uint8_t fifoBuffer[64]; // FIFO storage buffer
 
 // orientation/motion vars
-Quaternion q;           // [w, x, y, z]         quaternion container
+Quaternion q1;           // [w, x, y, z]         quaternion container
 VectorInt16 aa;         // [x, y, z]            accel sensor measurements
 VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
 VectorInt16 aaWorld;    // [x, y, z]            world-frame accel sensor measurements
@@ -240,7 +241,7 @@ void setupMotion() {
     }
 
     // configure LED for output
-    pinMode(DATA_PIN, OUTPUT);
+    pinMode(LED_PIN, OUTPUT);
 }
 
 
@@ -309,11 +310,11 @@ void printMotion() {
         #ifdef OUTPUT_READABLE_WORLDACCEL
             // display initial world-frame acceleration, adjusted to remove gravity
             // and rotated based on known orientation from quaternion
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
+            mpu.dmpGetQuaternion(&q1, fifoBuffer);
             mpu.dmpGetAccel(&aa, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
+            mpu.dmpGetGravity(&gravity, &q1);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-            mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
+            mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q1);
 //            Serial.print("aworld\t");
             Serial.print(aaWorld.x);
             Serial.print("\t");

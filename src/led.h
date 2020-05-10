@@ -1,3 +1,4 @@
+#pragma once
 #include <Arduino.h>
 
 #include <FastLED.h>
@@ -7,6 +8,7 @@
 CRGB leds[ANZAHL_LEDS];
 
 void setupLed() {
+    //FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);   
     FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, ANZAHL_LEDS);
 }
 
