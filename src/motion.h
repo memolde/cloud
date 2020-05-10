@@ -250,9 +250,9 @@ void setupMotion() {
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 
-void printMotion() {
+float printMotion() {
     // if programming failed, don't try to do anything
-    if (!dmpReady) return;
+    if (!dmpReady) return 0.0;
     // read a packet from FIFO
     if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet 
         #ifdef OUTPUT_READABLE_QUATERNION
@@ -321,6 +321,7 @@ void printMotion() {
             Serial.print(aaWorld.y);
             Serial.print("\t");
             Serial.println(aaWorld.z);
+            return abs(aaWorld.x)+abs(aaWorld.y)+abs(aaWorld.z);
         #endif
     
         #ifdef OUTPUT_TEAPOT
