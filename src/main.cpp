@@ -5,6 +5,7 @@
 
 void setup() {
     setupMotion();
+    setupLed();
 }
 
 
@@ -14,6 +15,7 @@ void setup() {
 // ================================================================
 
 void loop() {
-    printMotion();
+//    printMotion();
+    updateLed();
     delay(500);
 }

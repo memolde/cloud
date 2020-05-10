@@ -240,7 +240,7 @@ void setupMotion() {
     }
 
     // configure LED for output
-    pinMode(LED_PIN, OUTPUT);
+    pinMode(DATA_PIN, OUTPUT);
 }
 
 
