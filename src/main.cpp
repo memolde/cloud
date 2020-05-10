@@ -16,11 +16,13 @@ void setup() {
 // ================================================================
 
 void loop() {
+/*
     float shake = printMotion();
     Serial.print("shake : ");
     Serial.print(shake);
     Serial.print("\t");
     int bright = sqrt(shake);
+    */
+    int bright = 100;
     updateLed(bright);
-    delay(500);
 }
