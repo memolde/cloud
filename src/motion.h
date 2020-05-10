@@ -343,3 +343,18 @@ float printMotion() {
 //        digitalWrite(LED_PIN, blinkState);
     }
 }
+float getMotion() {
+    // if programming failed, don't try to do anything
+    if (!dmpReady) return 0.0;
+    // read a packet from FIFO
+    if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet 
+            // display initial world-frame acceleration, adjusted to remove gravity
+            // and rotated based on known orientation from quaternion
+            mpu.dmpGetQuaternion(&q1, fifoBuffer);
+            mpu.dmpGetAccel(&aa, fifoBuffer);
+            mpu.dmpGetGravity(&gravity, &q1);
+            mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+            mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q1);
+            return abs(aaWorld.x)+abs(aaWorld.y)+abs(aaWorld.z);
+    }
+}

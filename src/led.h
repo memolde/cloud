@@ -37,14 +37,14 @@ void nextPattern()
 
 void updateLed(float brightness ) {
 
-  if(brightness>30 && brightnessold <30){
+  if(brightness>100 && brightnessold < 100){
     nextPattern();
   }
   brightnessold = brightness;
 
-  brightness = min(brightness * 4 ,255);
+  // brightness = min(brightness * 4 ,255);
 
-  brightness = brightness * ANZAHL_LEDS / 255.0;
+  // brightness = brightness * ANZAHL_LEDS / 255.0;
   /*
   Serial.print(" : ");
   Serial.print(brightness);

@@ -15,7 +15,16 @@ void setup() {
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 
+int motionCheck = 0;
+int bright = 0;
+
 void loop() {
+    motionCheck++;
+    motionCheck %= 30;
+    if(motionCheck==0){
+        bright = getMotion();
+    }
+
 /*
     float shake = printMotion();
     Serial.print("shake : ");
@@ -23,6 +32,5 @@ void loop() {
     Serial.print("\t");
     int bright = sqrt(shake);
     */
-    int bright = 100;
     updateLed(bright);
 }
