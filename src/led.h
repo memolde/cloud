@@ -3,9 +3,9 @@
 
 #include <FastLED.h>
 
-#define ANZAHL_LEDS 55
+#define ANZAHL_LEDS 26
 #define DATA_PIN 11
-#define FRAMES_PER_SECOND  120
+#define FRAMES_PER_SECOND  30
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 int promille = 0;
@@ -14,18 +14,19 @@ CRGB leds[ANZAHL_LEDS];
 
 void sky();
 void fire2();
-
+void rainbow();
+void thunderstorm();
 
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = { fire2,  sky };
+SimplePatternList gPatterns = { thunderstorm, fire2,  sky, rainbow };
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 
 
 void setupLed() {
     //FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);   
     FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, ANZAHL_LEDS);
-    FastLED.setMaxPowerInVoltsAndMilliamps( 5, 100); //600 for Battery 200 for Programming
-    FastLED.setBrightness(20);    
+    FastLED.setMaxPowerInVoltsAndMilliamps( 5, 200); //600 for Battery 200 for Programming
+    FastLED.setBrightness(90);    
 }
 void nextPattern()
 {
@@ -37,29 +38,10 @@ void nextPattern()
 
 void updateLed(float brightness ) {
 
-  if(brightness>100 && brightnessold < 100){
+  if(brightness>150 && brightnessold < 150){
     nextPattern();
   }
   brightnessold = brightness;
-
-  // brightness = min(brightness * 4 ,255);
-
-  // brightness = brightness * ANZAHL_LEDS / 255.0;
-  /*
-  Serial.print(" : ");
-  Serial.print(brightness);
-  Serial.print(" : ");
-  */
- /*
-  for (int i = 0; i < ANZAHL_LEDS -1 ; i++)
-  {
-    leds[i] = CRGB::Black;
-    if((brightness+2>i) && ((brightness-2)<i) ){
-      leds[i] = CRGB::Red;
-    }
-  }
-  */
-
   
 //  leds[0].nscale8(brightness);
   gPatterns[gCurrentPatternNumber]();
@@ -153,4 +135,47 @@ void fire2(){
   cloud(400,200,3,true,firecolor);
   cloud(600,250,4,true,firecolor);
   cloud(800,300,5,true,firecolor);
+}
+void rainbow(){
+  uint8_t hue;
+  hue = long(promille)*250L/1000L;
+  for( uint16_t i = 0; i < ANZAHL_LEDS; i++) {
+    leds[i] = CHSV(hue,255,255);
+    hue += 256/ANZAHL_LEDS;
+  }
+}
+void thunderstorm(){
+  fill_solid( leds, ANZAHL_LEDS, CRGB(10,0,150));  
+  CRGB cloudcolor (50,0,100);
+  cloud(200,400,2,true,cloudcolor);
+  cloud(0,700,3,true,cloudcolor);
+  cloud(100,1000,5,false,cloudcolor);
+  cloud(800,600,4,false,cloudcolor);
+  switch (promille)
+  {
+  case 100:
+    fill_solid( leds, ANZAHL_LEDS, CRGB(255,100,255));  
+    break;
+  case 300:
+    fill_solid( leds, ANZAHL_LEDS, CRGB(200,100,255));  
+    break;
+  case 460:
+    fill_solid( leds, ANZAHL_LEDS, CRGB(255,100,180));  
+    break;
+  case 490:
+    fill_solid( leds, ANZAHL_LEDS, CRGB(255,100,180));  
+    break;
+  case 730:
+    fill_solid( leds, ANZAHL_LEDS, CRGB(200,100,255));  
+    break;
+  case 890:
+    fill_solid( leds, ANZAHL_LEDS, CRGB(255,100,200));  
+    break;
+  case 980:
+    fill_solid( leds, ANZAHL_LEDS, CRGB(255,100,200));  
+    break;
+  
+  default:
+    break;
+  }
 }
