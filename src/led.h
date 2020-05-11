@@ -126,10 +126,10 @@ void sky(){
 }
 
 void fire2(){
-  int pulse = 50 + sin(promille*PI/250) * 15.0;
+  int pulse = 30 + sin(promille*PI/250) * 10.0;
   CRGB firebase(255,pulse,0);
   fill_solid( leds, ANZAHL_LEDS, firebase);  
-  CRGB firecolor (255,20+pulse,10);
+  CRGB firecolor (200,20+pulse,0);
   cloud(0,200,3,true,firecolor);
   cloud(200,300,4,true,firecolor);
   cloud(400,200,3,true,firecolor);
@@ -145,8 +145,8 @@ void rainbow(){
   }
 }
 void thunderstorm(){
-  fill_solid( leds, ANZAHL_LEDS, CRGB(10,0,150));  
-  CRGB cloudcolor (50,0,100);
+  fill_solid( leds, ANZAHL_LEDS, CRGB(50,0,150));  
+  CRGB cloudcolor (00,20,100);
   cloud(200,400,2,true,cloudcolor);
   cloud(0,700,3,true,cloudcolor);
   cloud(100,1000,5,false,cloudcolor);
