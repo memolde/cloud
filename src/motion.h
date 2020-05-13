@@ -205,7 +205,7 @@ void setupMotion() {
     mpu.setXGyroOffset(220);
     mpu.setYGyroOffset(76);
     mpu.setZGyroOffset(-85);
-    mpu.setZAccelOffset(1788); // 1688 factory default for my test chip
+    mpu.setZAccelOffset(1688); // 1688 factory default for my test chip
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {
@@ -355,6 +355,12 @@ float getMotion() {
             mpu.dmpGetGravity(&gravity, &q1);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
             mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q1);
-            return abs(aaWorld.x)+abs(aaWorld.y)+abs(aaWorld.z);
+            Serial.print(aaWorld.x);
+            Serial.print("\t");
+            Serial.print(aaWorld.y);
+            Serial.print("\t");
+            Serial.print(aaWorld.z);
+            Serial.print("\t");
+           return abs(aaWorld.x)+abs(aaWorld.y); //Z-Axis is not as reliable as x and y
     }
 }

@@ -23,9 +23,9 @@ void loop() {
     motionCheck %= 30;
     if(motionCheck==0){
         bright = getMotion();
+        Serial.print("shake : ");
+        Serial.println(bright);
     }
-//    Serial.print("shake : ");
-//    Serial.print(bright);
 /*
     float shake = printMotion();
     Serial.print("shake : ");

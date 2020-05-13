@@ -38,7 +38,8 @@ void nextPattern()
 
 void updateLed(float brightness ) {
 
-  if(brightness>150 && brightnessold < 150){
+  if(brightness>200 && brightnessold < 200){
+    Serial.println("Next Pattern");
     nextPattern();
   }
   brightnessold = brightness;
@@ -56,23 +57,6 @@ void updateLed(float brightness ) {
     promille++; 
     promille = promille % 1000;
   } 
-  /*
-  leds[0] = CRGB::Red;
-  FastLED.show();
-  delay(1000);
-  leds[0] = CRGB::Blue;
-  FastLED.show();
-  delay(1000);
-  leds[0] = CRGB::Green;
-  FastLED.show();
-  delay(1000);
-  leds[0] = CRGB::Yellow;
-  FastLED.show();
-  delay(1000);
-  leds[0] = CRGB::Black;
-  FastLED.show();
-  delay(1000);
-  */
 }
 
 
