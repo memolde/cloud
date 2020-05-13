@@ -10,9 +10,9 @@
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 #define MAXBRIGHT 120
-#define FADE      2000
-#define FADETIME  3000
-#define SLEEPTIME 2000
+#define FADE      200000  //  900 sec =  15 min
+#define FADETIME  60000   //   60 sec =   1 min 
+#define SLEEPTIME 3600000 // 3600 sec =   1 h
 
 int promille = 0;
 int shakeOld = 0;
