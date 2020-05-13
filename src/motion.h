@@ -209,6 +209,28 @@ void setupMotion() {
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {
+        // Set accuracies
+        mpu.setFullScaleGyroRange(0);
+        Serial.print(" Gyro Range : ");
+        Serial.print(mpu.getFullScaleGyroRange());
+
+
+//        mpu.getFullScaleAccelRange(0);
+        Serial.print(" Accel Range : ");
+        Serial.print(mpu.getFullScaleAccelRange());
+
+//        mpu.getFullScaleAccelRange(0);
+        Serial.print(" Rate : ");
+        Serial.print(mpu.getRate());
+
+
+        mpu.setDLPFMode(6);
+        Serial.print(" Low pass : ");
+        Serial.print(mpu.getDLPFMode());
+
+
+        Serial.println("");
+
         // Calibration Time: generate offsets and calibrate our MPU6050
         mpu.CalibrateAccel(6);
         mpu.CalibrateGyro(6);
