@@ -12,10 +12,10 @@
 #define MAXBRIGHT 120
 #define FADE      2000
 #define FADETIME  3000
-#define SLEEPTIME 5000
+#define SLEEPTIME 2000
 
 int promille = 0;
-int brightnessold = 0;
+int shakeOld = 0;
 unsigned long lastChange = 0;
 boolean lowVoltage = false;
 CRGB leds[ANZAHL_LEDS];
@@ -48,7 +48,7 @@ void nextPattern()
 }
 
 
-void updateLed(float brightness ) {
+void updateLed(float shake ) {
 
   long vcc = readVcc();
   if(vcc < 3200 ){
@@ -71,11 +71,11 @@ void updateLed(float brightness ) {
       FastLED.setBrightness(0);
     }
 
-    if(brightness>250 && brightnessold < 250){
+    if(shake>SHAKELIMIT && shakeOld <= SHAKELIMIT){
       Serial.println("Next Pattern");
       nextPattern();
     }
-    brightnessold = brightness;
+    shakeOld = shake;
     gPatterns[gCurrentPatternNumber]();
   } else{
     if(vcc>3000){

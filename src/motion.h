@@ -125,7 +125,7 @@ MPU6050 mpu;
 
 #define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
-bool blinkState = false;
+//bool blinkState = false;
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -263,7 +263,7 @@ void setupMotion() {
     }
 
     // configure LED for output
-    pinMode(LED_PIN, OUTPUT);
+//    pinMode(LED_PIN, OUTPUT);
 }
 
 
@@ -361,7 +361,7 @@ float printMotion() {
         #endif
 
         // blink LED to indicate activity
-        blinkState = !blinkState;
+//        blinkState = !blinkState;
 //        digitalWrite(LED_PIN, blinkState);
     }
 }
@@ -377,12 +377,14 @@ float getMotion() {
             mpu.dmpGetGravity(&gravity, &q1);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
             mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q1);
+    /*
             Serial.print(aaWorld.x);
             Serial.print("\t");
             Serial.print(aaWorld.y);
             Serial.print("\t");
             Serial.print(aaWorld.z);
             Serial.print("\t");
+            */
            return abs(aaWorld.x)+abs(aaWorld.y); //Z-Axis is not as reliable as x and y
     }
 }
