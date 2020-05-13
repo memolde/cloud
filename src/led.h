@@ -2,14 +2,22 @@
 #include <Arduino.h>
 
 #include <FastLED.h>
+#include <LowPower.h>
 
 #define ANZAHL_LEDS 26
 #define DATA_PIN 11
 #define FRAMES_PER_SECOND  30
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
+#define MAXBRIGHT 120
+#define FADE      2000
+#define FADETIME  3000
+#define SLEEPTIME 5000
+
 int promille = 0;
 int brightnessold = 0;
+unsigned long lastChange = 0;
+boolean lowVoltage = false;
 CRGB leds[ANZAHL_LEDS];
 
 void sky();
@@ -18,34 +26,71 @@ void rainbow();
 void thunderstorm();
 
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = { thunderstorm, fire2,  sky, rainbow };
+SimplePatternList gPatterns = { fire2,  sky, rainbow };
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 
 
 void setupLed() {
     //FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);   
     FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, ANZAHL_LEDS);
-    FastLED.setMaxPowerInVoltsAndMilliamps( 5, 200); //600 for Battery 200 for Programming
-    FastLED.setBrightness(90);    
+    FastLED.setMaxPowerInVoltsAndMilliamps( 5, 250); //600 for Battery 200 for Programming
+    FastLED.setBrightness(MAXBRIGHT);    
+    FastLED.setCorrection(TypicalSMD5050);
+    FastLED.setDither(DISABLE_DITHER);
+    lastChange = millis();
 }
 void nextPattern()
 {
   // add one to the current pattern number, and wrap around at the end
   gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE(gPatterns);
-
+  lastChange = millis();
+  FastLED.setBrightness(MAXBRIGHT);    
 }
 
 
 void updateLed(float brightness ) {
 
-  if(brightness>200 && brightnessold < 200){
-    Serial.println("Next Pattern");
-    nextPattern();
+  long vcc = readVcc();
+  if(vcc < 3200 ){
+    lowVoltage = true;
   }
-  brightnessold = brightness;
+  if(vcc > 3600 ){
+    lowVoltage = false;
+  }
+  if(!lowVoltage){
+    unsigned long duration = millis() - lastChange;
+    if(duration>FADE && duration <= FADE + FADETIME*0.93 ){
+      powerSave = false;
+      FastLED.setBrightness(MAXBRIGHT - ((duration-FADE)*MAXBRIGHT)/(FADETIME));
+    }
+    if(duration>FADE + FADETIME && duration <= FADE + FADETIME + SLEEPTIME){
+      FastLED.setBrightness(8);
+    }
+    if(duration>FADE + FADETIME + SLEEPTIME){
+      powerSave = true;
+      FastLED.setBrightness(0);
+    }
+
+    if(brightness>250 && brightnessold < 250){
+      Serial.println("Next Pattern");
+      nextPattern();
+    }
+    brightnessold = brightness;
+    gPatterns[gCurrentPatternNumber]();
+  } else{
+    if(vcc>3000){
+      thunderstorm();
+    }else{
+      fill_solid( leds, ANZAHL_LEDS, CRGB::Black);  
+      FastLED.show();
+      delay(1000);
+      // Power down to save the battery from failure
+      LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);       
+    }
+    
+  }
   
 //  leds[0].nscale8(brightness);
-  gPatterns[gCurrentPatternNumber]();
   FastLED.show();
 
   // insert a delay to keep the framerate modest
@@ -138,9 +183,15 @@ void thunderstorm(){
   switch (promille)
   {
   case 100:
+  case 500:
+  case 800:
     fill_solid( leds, ANZAHL_LEDS, CRGB(255,100,255));  
     break;
+  case 180:
+  case 280:
   case 300:
+  case 580:
+  case 680:
     fill_solid( leds, ANZAHL_LEDS, CRGB(200,100,255));  
     break;
   case 460:
