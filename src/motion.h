@@ -377,14 +377,22 @@ float getMotion() {
             mpu.dmpGetGravity(&gravity, &q1);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
             mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q1);
-    
+/*
+            Serial.print("areal\t");
+            Serial.print(aaReal.x);
+            Serial.print("\t");
+            Serial.print(aaReal.y);
+            Serial.print("\t");
+            Serial.print(aaReal.z);
+
+            Serial.print("\tWorld\t");
             Serial.print(aaWorld.x);
             Serial.print("\t");
             Serial.print(aaWorld.y);
             Serial.print("\t");
             Serial.print(aaWorld.z);
             Serial.print("\t");
-            
-           return abs(aaWorld.x)+abs(aaWorld.y); //Z-Axis is not as reliable as x and y
+  */          
+           return float(abs(aaWorld.x))+float(abs(aaWorld.y)); //Z-Axis is not as reliable as x and y
     }
 }

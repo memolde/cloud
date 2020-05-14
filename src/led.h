@@ -32,7 +32,7 @@ uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 void setupLed() {
     //FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);   
     FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, ANZAHL_LEDS);
-    FastLED.setMaxPowerInVoltsAndMilliamps( 5, 250); //600 for Battery 200 for Programming
+    FastLED.setMaxPowerInVoltsAndMilliamps( 5, 200); //250
     FastLED.setBrightness(MAXBRIGHT);    
     FastLED.setCorrection(TypicalSMD5050);
 //    FastLED.setDither(DISABLE_DITHER);
