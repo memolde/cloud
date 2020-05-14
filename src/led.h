@@ -10,8 +10,8 @@
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 #define MAXBRIGHT 120
-#define FADE      200000  //  900 sec =  15 min
-#define FADETIME  60000   //   60 sec =   1 min 
+#define FADE      900000  //  900 sec =  15 min
+#define FADETIME  120000  //  120 sec =   2 min 
 #define SLEEPTIME 3600000 // 3600 sec =   1 h
 
 int promille = 0;
@@ -26,7 +26,7 @@ void rainbow();
 void thunderstorm();
 
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = { fire2,  sky, rainbow };
+SimplePatternList gPatterns = { sky, rainbow, fire2  };
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 
 
@@ -36,11 +36,10 @@ void setupLed() {
     FastLED.setMaxPowerInVoltsAndMilliamps( 5, 250); //600 for Battery 200 for Programming
     FastLED.setBrightness(MAXBRIGHT);    
     FastLED.setCorrection(TypicalSMD5050);
-    FastLED.setDither(DISABLE_DITHER);
+//    FastLED.setDither(DISABLE_DITHER);
     lastChange = millis();
 }
-void nextPattern()
-{
+void nextPattern(){
   // add one to the current pattern number, and wrap around at the end
   gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE(gPatterns);
   lastChange = millis();
@@ -49,6 +48,12 @@ void nextPattern()
 
 
 void updateLed(float shake ) {
+
+  if(shake>SHAKELIMIT && shakeOld <= SHAKELIMIT){
+    //Serial.println("Next Pattern");
+    nextPattern();
+  }
+  shakeOld = shake;
 
   long vcc = readVcc();
   if(vcc < 3200 ){
@@ -59,25 +64,45 @@ void updateLed(float shake ) {
   }
   if(!lowVoltage){
     unsigned long duration = millis() - lastChange;
-    if(duration>FADE && duration <= FADE + FADETIME*0.93 ){
+    if(duration>FADE && duration <= FADE + FADETIME*0.96 ){
       powerSave = false;
       FastLED.setBrightness(MAXBRIGHT - ((duration-FADE)*MAXBRIGHT)/(FADETIME));
     }
     if(duration>FADE + FADETIME && duration <= FADE + FADETIME + SLEEPTIME){
-      FastLED.setBrightness(8);
+    // Dark mode
+      switch (gCurrentPatternNumber)
+      {
+      case 0:
+        // sky
+        FastLED.setBrightness(2);
+        fill_solid( leds, ANZAHL_LEDS, CRGB::Blue);  
+        FastLED.show();
+        FastLED.delay(1000/FRAMES_PER_SECOND); 
+        return;
+      case 1:
+        // Rainbow
+        FastLED.setBrightness(5);
+        break;
+      case 2:
+        // Fire
+        fill_solid( leds, ANZAHL_LEDS, CRGB::Red);  
+        FastLED.setBrightness(1);
+        FastLED.show();
+        FastLED.delay(1000/FRAMES_PER_SECOND); 
+        return;
+      default:
+        break;
+      }
     }
+
     if(duration>FADE + FADETIME + SLEEPTIME){
       powerSave = true;
       FastLED.setBrightness(0);
     }
-
-    if(shake>SHAKELIMIT && shakeOld <= SHAKELIMIT){
-      Serial.println("Next Pattern");
-      nextPattern();
-    }
-    shakeOld = shake;
     gPatterns[gCurrentPatternNumber]();
+
   } else{
+    // Low voltage
     if(vcc>3000){
       thunderstorm();
     }else{
@@ -97,7 +122,6 @@ void updateLed(float shake ) {
   FastLED.delay(1000/FRAMES_PER_SECOND); 
 
   // do some periodic updates
-//  EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
   EVERY_N_MILLISECONDS( 20 ) { 
     promille++; 
     promille = promille % 1000;

@@ -2,7 +2,7 @@
 #include <FastLED.h>
 
 boolean powerSave = false;
-#define SHAKELIMIT 250
+#define SHAKELIMIT 350
 #define LED_PIN 13
 
 #include "voltage.h"
