@@ -224,7 +224,7 @@ void setupMotion() {
         Serial.print(mpu.getRate());
 
 
-        mpu.setDLPFMode(6);
+        mpu.setDLPFMode(5);
         Serial.print(" Low pass : ");
         Serial.print(mpu.getDLPFMode());
 
@@ -377,14 +377,14 @@ float getMotion() {
             mpu.dmpGetGravity(&gravity, &q1);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
             mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q1);
-    /*
+    
             Serial.print(aaWorld.x);
             Serial.print("\t");
             Serial.print(aaWorld.y);
             Serial.print("\t");
             Serial.print(aaWorld.z);
             Serial.print("\t");
-            */
+            
            return abs(aaWorld.x)+abs(aaWorld.y); //Z-Axis is not as reliable as x and y
     }
 }

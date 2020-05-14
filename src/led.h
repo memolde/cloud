@@ -10,12 +10,11 @@
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 #define MAXBRIGHT 120
-#define FADE      900000  //  900 sec =  15 min
-#define FADETIME  120000  //  120 sec =   2 min 
-#define SLEEPTIME 3600000 // 3600 sec =   1 h
+#define FADE      600000  //  600 sec =  10 min
+#define FADETIME  300000  //  300 sec =   5 min 
+#define SLEEPTIME 1800000 // 1800 sec =  30 min
 
 int promille = 0;
-int shakeOld = 0;
 unsigned long lastChange = 0;
 boolean lowVoltage = false;
 CRGB leds[ANZAHL_LEDS];
@@ -47,13 +46,12 @@ void nextPattern(){
 }
 
 
-void updateLed(float shake ) {
+void updateLed(boolean shaking) {
 
-  if(shake>SHAKELIMIT && shakeOld <= SHAKELIMIT){
+  if(shaking){
     //Serial.println("Next Pattern");
     nextPattern();
   }
-  shakeOld = shake;
 
   long vcc = readVcc();
   if(vcc < 3200 ){

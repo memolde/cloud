@@ -24,8 +24,11 @@ void setup() {
 
 int motionCheck = 0;
 int shake = 0;
+long shakeaverage = 5000;
 long vcc = 0;
 bool blinkState = false;
+boolean shaken = false;
+boolean shaking = false;
 
 void loop() {
 
@@ -46,16 +49,34 @@ void loop() {
 
   }else{
     motionCheck++;
-    motionCheck %= 30;
+    motionCheck %= 15;
     if(motionCheck==0){
         shake = getMotion();
-    /*
+    
         Serial.print("shake : ");
         Serial.print(shake);
+        Serial.print("\t avg : ");
+        Serial.print(shakeaverage);
+        if(shake > shakeaverage * 1.7+200){
+            Serial.print("\t x");
+            if(!shaken){
+                shaking = true;
+                shaken = true;
+            }else{
+                shaking = false;
+            }
+        }else{
+            shaken = false;
+            shaking = false;
+        }
+        Serial.print("\t ");
+        Serial.println(shaking);
+        /*
         vcc = readVcc();
         Serial.print("voltage : ");
         Serial.println(vcc);
     */
+        shakeaverage = ( shakeaverage * 5 + shake )/6;
     }
 /*
     float shake = printMotion();
@@ -64,6 +85,7 @@ void loop() {
     Serial.print("\t");
     int bright = sqrt(shake);
     */
-    updateLed(shake);
+    updateLed(shaking);
+    shaking = false;
   }
 }
