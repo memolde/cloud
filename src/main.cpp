@@ -9,6 +9,7 @@ boolean powerSave = false;
 #include "motion.h"
 #include "led.h"
 
+boolean shakeDetection();
 
 void setup() {
     setupMotion();
@@ -34,69 +35,21 @@ boolean shaking = false;
 void loop() {
 
   if(powerSave){
-    shake = getMotion();
-    /*
-        Serial.print("shake : ");
-        Serial.print(shake);
-        */
-    if(shake > SHAKELIMIT){
+    
+    if(shakeDetection()){
         powerSave = false;
+        resetLEDState();
+        // No pattern change
+        shaking = false;
     }else{
         LowPower.powerDown(SLEEP_500MS, ADC_OFF, BOD_OFF);  
-        //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_ON, TWI_OFF);        
+        updateLed(shaking);
     }
-        // blinkState = !blinkState;
-        // digitalWrite(LED_PIN, blinkState);
-
   }else{
     motionCheck++;
     motionCheck %= updateRate;
     if(motionCheck==0){
-        shake = getMotion();
-        if(shake>shakeaverage+9000){
-            shake = shakeOld;
-        }
-
-
-//        Serial.print("shake : ");
-        Serial.print(shake);
-        Serial.print("\t");
-//        Serial.print("\t avg : ");
-        Serial.print(shakeaverage);
-        Serial.print("\t");
-//        Serial.print((shake/shakeaverage)*1000);
-
-        Serial.println("");
-
-        if(shake > shakeaverage * 1.3+1000){
-//            Serial.print("\t x");
-            if(!shaken){
-                shaking = true;
-                shaken = true;
-                updateRate=50;
-                shakeaverage=shake;
-            }else{
-                shaking = false;
-            }
-        }else{
-            updateRate -=5;
-            updateRate = max(updateRate,10);
-            shaken = false;
-            shaking = false;
-        }
-        // Serial.print("\t ");
-        // Serial.println(shaking);
-        /*
-        vcc = readVcc();
-        Serial.print("voltage : ");
-        Serial.println(vcc);
-    */
-        if(shakeaverage > shake ){
-                shakeaverage = ( shakeaverage * 9 + shake )/10;
-        }else{
-                shakeaverage = ( shakeaverage * 1 + shake )/2;
-        }
-        shakeOld = shake;
+        shakeDetection();
     }
 /*
     float shake = printMotion();
@@ -108,4 +61,50 @@ void loop() {
     updateLed(shaking);
     shaking = false;
   }
+}
+boolean shakeDetection(){
+    shake = getMotion();
+    // Filter extremes
+    if(shake>shakeaverage+9000){
+        shake = shakeOld;
+    }
+
+    //        Serial.print("shake : ");
+    Serial.print(shake);
+    Serial.print("\t");
+    //        Serial.print("\t avg : ");
+    Serial.print(shakeaverage);
+    Serial.print("\t");
+    //        Serial.print((shake/shakeaverage)*1000);
+    Serial.println("");
+
+    if(shake > shakeaverage * 1.3+1000){
+        if(!shaken){
+            shaking = true;
+            shaken = true;
+            updateRate=50;
+            shakeaverage=shake;
+        }else{
+            shaking = false;
+        }
+    }else{
+        updateRate -=5;
+        updateRate = max(updateRate,10);
+        shaken = false;
+        shaking = false;
+    }
+    // Serial.print("\t ");
+    // Serial.println(shaking);
+    /*
+    vcc = readVcc();
+    Serial.print("voltage : ");
+    Serial.println(vcc);
+    */
+    if(shakeaverage > shake ){
+            shakeaverage = ( shakeaverage * 9 + shake )/10;
+    }else{
+            shakeaverage = ( shakeaverage * 1 + shake )/2;
+    }
+    shakeOld = shake;
+    return shaking;
 }

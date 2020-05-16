@@ -14,10 +14,12 @@
 #define FADETIME  300000  //  300 sec =   5 min 
 #define SLEEPTIME 1800000 // 1800 sec =  30 min
 
+
 int promille = 0;
 unsigned long lastChange = 0;
 boolean lowVoltage = false;
 CRGB leds[ANZAHL_LEDS];
+boolean darkmode=false;
 
 void sky();
 void fire2();
@@ -38,12 +40,16 @@ void setupLed() {
 //    FastLED.setDither(DISABLE_DITHER);
     lastChange = millis();
 }
-void nextPattern(){
-  // add one to the current pattern number, and wrap around at the end
-  gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE(gPatterns);
+void resetLEDState(){
   lastChange = millis();
   FastLED.setBrightness(MAXBRIGHT);    
 }
+void nextPattern(){
+  // add one to the current pattern number, and wrap around at the end
+  gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE(gPatterns);
+   resetLEDState();
+}
+
 
 
 void updateLed(boolean shaking) {
@@ -65,37 +71,44 @@ void updateLed(boolean shaking) {
     if(duration>FADE && duration <= FADE + FADETIME*0.96 ){
       powerSave = false;
       FastLED.setBrightness(MAXBRIGHT - ((duration-FADE)*MAXBRIGHT)/(FADETIME));
+      darkmode=false;
     }
     if(duration>FADE + FADETIME && duration <= FADE + FADETIME + SLEEPTIME){
     // Dark mode
-      switch (gCurrentPatternNumber)
-      {
-      case 0:
-        // sky
-        FastLED.setBrightness(2);
-        fill_solid( leds, ANZAHL_LEDS, CRGB::Blue);  
-        FastLED.show();
-        FastLED.delay(1000/FRAMES_PER_SECOND); 
-        return;
-      case 1:
-        // Rainbow
-        FastLED.setBrightness(5);
-        break;
-      case 2:
-        // Fire
-        fill_solid( leds, ANZAHL_LEDS, CRGB::Red);  
-        FastLED.setBrightness(1);
-        FastLED.show();
-        FastLED.delay(1000/FRAMES_PER_SECOND); 
-        return;
-      default:
-        break;
+      if(!darkmode){
+        switch (gCurrentPatternNumber)
+        {
+        case 0:
+          // sky
+          FastLED.setBrightness(2);
+          fill_solid( leds, ANZAHL_LEDS, CRGB::Blue);  
+          FastLED.show();
+          //FastLED.delay(1000/FRAMES_PER_SECOND); 
+          return;
+        case 1:
+          // Rainbow
+          FastLED.setBrightness(5);
+          break;
+        case 2:
+          // Fire
+          fill_solid( leds, ANZAHL_LEDS, CRGB::Red);  
+          FastLED.setBrightness(1);
+          FastLED.show();
+          //FastLED.delay(1000/FRAMES_PER_SECOND); 
+          return;
+        default:
+          break;
+        }
       }
+      // Set leds only once
+      darkmode=true;
+      powerSave = true;
     }
 
     if(duration>FADE + FADETIME + SLEEPTIME){
       powerSave = true;
       FastLED.setBrightness(0);
+      darkmode=false;
     }
     gPatterns[gCurrentPatternNumber]();
 

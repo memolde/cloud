@@ -221,7 +221,7 @@ void setupMotion() {
         Serial.print(" Accel Range : ");
 //        Serial.print(mpu.getFullScaleAccelRange());
 
-        mpu.setRate(9)
+//        mpu.setRate(9);
         Serial.print(" Rate : ");
 //        Serial.print(mpu.getRate());
 
