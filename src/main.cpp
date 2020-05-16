@@ -21,7 +21,7 @@ void setup() {
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
-
+int updateRate = 20;
 int motionCheck = 0;
 float shake = 0;
 float shakeOld = 0;
@@ -50,30 +50,37 @@ void loop() {
 
   }else{
     motionCheck++;
-    motionCheck %= 5;
+    motionCheck %= updateRate;
     if(motionCheck==0){
         shake = getMotion();
         if(shake>shakeaverage+9000){
             shake = shakeOld;
         }
-    
+
+
 //        Serial.print("shake : ");
         Serial.print(shake);
         Serial.print("\t");
 //        Serial.print("\t avg : ");
         Serial.print(shakeaverage);
         Serial.print("\t");
-        Serial.print((shake/shakeaverage)*1000);
+//        Serial.print((shake/shakeaverage)*1000);
+
         Serial.println("");
-        if(shake > shakeaverage * 1.5+1000){
+
+        if(shake > shakeaverage * 1.3+1000){
 //            Serial.print("\t x");
             if(!shaken){
                 shaking = true;
                 shaken = true;
+                updateRate=50;
+                shakeaverage=shake;
             }else{
                 shaking = false;
             }
         }else{
+            updateRate -=5;
+            updateRate = max(updateRate,10);
             shaken = false;
             shaking = false;
         }

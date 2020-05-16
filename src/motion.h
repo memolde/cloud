@@ -202,39 +202,41 @@ void setupMotion() {
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
-    mpu.setXGyroOffset(220);
-    mpu.setYGyroOffset(76);
-    mpu.setZGyroOffset(-85);
-    mpu.setZAccelOffset(1688); // 1688 factory default for my test chip
+    mpu.setXGyroOffset(44);
+    mpu.setYGyroOffset(-25);
+    mpu.setZGyroOffset(3);
+    mpu.setXAccelOffset(-1990); 
+    mpu.setYAccelOffset(-425); 
+    mpu.setZAccelOffset(1414); 
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {
         // Set accuracies
         mpu.setFullScaleGyroRange(0);
         Serial.print(" Gyro Range : ");
-        Serial.print(mpu.getFullScaleGyroRange());
+//        Serial.print(mpu.getFullScaleGyroRange());
 
 
-//        mpu.getFullScaleAccelRange(0);
+        mpu.setFullScaleAccelRange(2);
         Serial.print(" Accel Range : ");
-        Serial.print(mpu.getFullScaleAccelRange());
+//        Serial.print(mpu.getFullScaleAccelRange());
 
-//        mpu.getFullScaleAccelRange(0);
+        mpu.setRate(9)
         Serial.print(" Rate : ");
-        Serial.print(mpu.getRate());
+//        Serial.print(mpu.getRate());
 
 
         mpu.setDLPFMode(5);
         Serial.print(" Low pass : ");
-        Serial.print(mpu.getDLPFMode());
+//        Serial.print(mpu.getDLPFMode());
 
 
         Serial.println("");
 
         // Calibration Time: generate offsets and calibrate our MPU6050
-        mpu.CalibrateAccel(6);
-        mpu.CalibrateGyro(6);
-        mpu.PrintActiveOffsets();
+        // mpu.CalibrateAccel(6);
+        // mpu.CalibrateGyro(6);
+//        mpu.PrintActiveOffsets();
         // turn on the DMP, now that it's ready
         Serial.println(F("Enabling DMP..."));
         mpu.setDMPEnabled(true);
@@ -244,7 +246,7 @@ void setupMotion() {
         Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));
         Serial.println(F(")..."));
         attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
-        mpuIntStatus = mpu.getIntStatus();
+//        mpuIntStatus = mpu.getIntStatus();
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
         Serial.println(F("DMP ready! Waiting for first interrupt..."));
@@ -377,6 +379,19 @@ float getMotion() {
             mpu.dmpGetGravity(&gravity, &q1);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
             mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q1);
+
+/*
+            Serial.print("quat\t");
+            Serial.print(q1.w);
+            Serial.print("\t");
+            Serial.print(q1.x);
+            Serial.print("\t");
+            Serial.print(q1.y);
+            Serial.print("\t");
+            Serial.print(q1.z);
+            Serial.print("\t");
+*/
+
 /*
             Serial.print("areal\t");
             Serial.print(aaReal.x);
