@@ -78,16 +78,16 @@ void updateLed(boolean shaking) {
         switch (gCurrentPatternNumber)
         {
         case 0:
+          // Rainbow
+          FastLED.setBrightness(5);
+          break;
+        case 1:
           // sky
           FastLED.setBrightness(2);
           fill_solid( leds, ANZAHL_LEDS, CRGB::Blue);  
           FastLED.show();
           //FastLED.delay(1000/FRAMES_PER_SECOND); 
           return;
-        case 1:
-          // Rainbow
-          FastLED.setBrightness(5);
-          break;
         case 2:
           // Fire
           fill_solid( leds, ANZAHL_LEDS, CRGB::Red);  
