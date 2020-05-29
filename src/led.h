@@ -10,10 +10,9 @@
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 #define MAXBRIGHT 120
-#define FADE      600000  //  600 sec =  10 min
-#define FADETIME  300000  //  300 sec =   5 min 
-#define SLEEPTIME 1800000 // 1800 sec =  30 min
-
+#define FADE      300000  //  300 sec =  5 min
+#define FADETIME  120000  //  120 sec =  2 min 
+#define SLEEPTIME 900000  //  900 sec =  15 min
 
 int promille = 0;
 unsigned long lastChange = 0;
@@ -27,7 +26,7 @@ void rainbow();
 void thunderstorm();
 
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = { sky, rainbow, fire2  };
+SimplePatternList gPatterns = { rainbow, sky, fire2  };
 uint8_t gCurrentPatternNumber = 0; // Index number of which pattern is current
 
 
@@ -66,8 +65,8 @@ void updateLed(boolean shaking) {
   if(vcc > 3600 ){
     lowVoltage = false;
   }
+  unsigned long duration = millis() - lastChange;
   if(!lowVoltage){
-    unsigned long duration = millis() - lastChange;
     if(duration>FADE && duration <= FADE + FADETIME*0.96 ){
       powerSave = false;
       FastLED.setBrightness(MAXBRIGHT - ((duration-FADE)*MAXBRIGHT)/(FADETIME));
@@ -114,6 +113,11 @@ void updateLed(boolean shaking) {
 
   } else{
     // Low voltage
+    if(duration>FADE + FADETIME + SLEEPTIME){
+      powerSave = true;
+      FastLED.setBrightness(0);
+      darkmode=false;
+    }
     if(vcc>3000){
       thunderstorm();
     }else{

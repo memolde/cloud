@@ -78,7 +78,7 @@ boolean shakeDetection(){
     //        Serial.print((shake/shakeaverage)*1000);
     Serial.println("");
 
-    if(shake > shakeaverage * 1.3+1000){
+    if(shake > shakeaverage * 1.3+700){
         if(!shaken){
             shaking = true;
             shaken = true;
