@@ -17,7 +17,7 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);    
 }
 
-// Beta 2 Release 1.0
+// Release 1.1
 
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
