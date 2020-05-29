@@ -14,6 +14,11 @@
 #define FADETIME  120000  //  120 sec =  2 min 
 #define SLEEPTIME 900000  //  900 sec =  15 min
 
+// #define FADE      3000  //  300 sec =  5 min
+// #define FADETIME  1200  //  120 sec =  2 min 
+// #define SLEEPTIME 9000  //  900 sec =  15 min
+
+
 int promille = 0;
 unsigned long lastChange = 0;
 boolean lowVoltage = false;
@@ -80,7 +85,9 @@ void updateLed(boolean shaking) {
         case 0:
           // Rainbow
           FastLED.setBrightness(5);
-          break;
+          gPatterns[gCurrentPatternNumber]();
+          FastLED.show();
+          return;
         case 1:
           // sky
           FastLED.setBrightness(2);
